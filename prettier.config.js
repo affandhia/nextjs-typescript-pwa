@@ -17,10 +17,10 @@ module.exports = {
   endOfLine: 'lf',
 
   // Plugin configuration
-  // plugins: ['prettier-plugin-tailwindcss'],
+  plugins: ['prettier-plugin-tailwindcss'],
 
   // Tailwind specific settings
-  // tailwindConfig: './tailwind.config.js',
+  tailwindConfig: './tailwind.config.js',
 
   // Overrides for specific file types
   overrides: [
