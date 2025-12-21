@@ -1,17 +1,19 @@
-/* eslint-disable @typescript-eslint/no-require-imports */
-const {
+import {
   PHASE_DEVELOPMENT_SERVER,
   PHASE_PRODUCTION_BUILD,
-} = require('next/constants');
+} from 'next/constants';
 
-/** @type {import("next").NextConfig} */
-const nextConfig = {
+import type { NextConfig } from 'next';
+
+const nextConfig: NextConfig = {
   reactStrictMode: true,
   output: 'export',
   basePath: process.env.ENV === 'development' ? '/dev' : '',
+  // Provide an empty turbopack config to avoid Turbopack/webpack conflict error
+  turbopack: {},
 };
 
-module.exports = (phase) => {
+export default (phase: string) => {
   if (
     // disable PWA in development mode (PHASE_DEVELOPMENT_SERVER) to allow `next dev --turbopack`
     phase === PHASE_DEVELOPMENT_SERVER ||

@@ -1,34 +1,18 @@
-// eslint.config.js (for ESLint 9.x and above, flat config format)
-import { FlatCompat } from '@eslint/eslintrc';
-import js from '@eslint/js';
-const compat = new FlatCompat({
-  recommendedConfig: js.configs.recommended,
-});
+// eslint.config.mjs for ESLint 9 flat config (no FlatCompat to avoid circular plugin structures)
+import { defineConfig, globalIgnores } from 'eslint/config';
+import nextCoreWebVitals from 'eslint-config-next/core-web-vitals';
+import tsPlugin from '@typescript-eslint/eslint-plugin';
 
-export default [
-  // Base JS/TS rules
-  js.configs.recommended,
-
-  // Include existing configs (Next.js, React, TypeScript, etc.)
-  ...compat.extends(
-    'next/core-web-vitals',
-    'eslint:recommended',
-    'plugin:react/recommended',
-    'plugin:react-hooks/recommended',
-    'plugin:@typescript-eslint/recommended',
-    'plugin:import/recommended',
-    'plugin:import/typescript',
-    'plugin:jsx-a11y/recommended',
-    'prettier' // Make sure prettier is last to avoid conflicts
-  ),
-
-  // Custom rules
+export default defineConfig([
+  ...nextCoreWebVitals,
   {
     files: ['**/*.{js,jsx,ts,tsx}'],
+    plugins: {
+      '@typescript-eslint': tsPlugin,
+    },
     rules: {
-      // JavaScript/TypeScript rules
       'no-console': ['warn', { allow: ['warn', 'error'] }],
-      'no-unused-vars': 'off', // Handled by TypeScript
+      'no-unused-vars': 'off',
       '@typescript-eslint/no-unused-vars': [
         'error',
         {
@@ -39,10 +23,8 @@ export default [
       ],
       '@typescript-eslint/explicit-module-boundary-types': 'off',
       '@typescript-eslint/no-explicit-any': 'warn',
-
-      // React rules
-      'react/react-in-jsx-scope': 'off', // Not needed in Next.js
-      'react/prop-types': 'off', // Use TypeScript for prop validation
+      'react/react-in-jsx-scope': 'off',
+      'react/prop-types': 'off',
       'react/display-name': 'off',
       'react-hooks/rules-of-hooks': 'error',
       'react-hooks/exhaustive-deps': 'warn',
@@ -58,8 +40,6 @@ export default [
           reservedFirst: true,
         },
       ],
-
-      // Import rules
       'import/order': [
         'warn',
         {
@@ -78,30 +58,27 @@ export default [
         },
       ],
       'import/no-cycle': 'error',
-
-      // Accessibility
       'jsx-a11y/anchor-is-valid': 'warn',
     },
   },
-
-  // Override for specific file patterns
   {
     files: ['**/pages/**/*.{js,jsx,ts,tsx}', '**/app/**/*.{js,jsx,ts,tsx}'],
     rules: {
-      'import/no-default-export': 'off', // Allow default exports in Next.js pages
+      'import/no-default-export': 'off',
     },
   },
-
-  // Configuration files and tests
   {
     files: [
-      '**/*.config.{js,ts}',
+      '**/*.config.{js,ts,mjs}',
       '**/tests/**/*.{js,jsx,ts,tsx}',
       '**/__tests__/**/*.{js,jsx,ts,tsx}',
     ],
     rules: {
       'import/no-default-export': 'off',
+      'import/no-anonymous-default-export': 'off',
       '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-require-imports': 'off',
     },
   },
-];
+  globalIgnores(['.next/**', 'out/**', 'build/**', 'next-env.d.ts']),
+]);
